@@ -1,5 +1,5 @@
 ---
-- name: "configuration play."
+- name: "Update UdaPeople backend configurations"
   hosts: web
   user: ubuntu
   gather_facts: false
@@ -8,11 +8,12 @@
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
 
-  pre_tasks:
-    - name: "Wait until backend is up and responding"
-      wait_for:
-        host: { { backend-ip } }
-        delay: 30
+  # pre_tasks:
+  #   - name: "Wait until backend is up and responding"
+  #     wait_for:
+  #       host: '{{ backend-ip }}'
+  #       port: 22
+  #       delay: 30
 
   roles:
     - configure-server
