@@ -178,6 +178,10 @@ jobs:
             apk add --update ansible
             ansible --version
       - run:
+          name: Install curl
+          command: |
+            apk add --update curl
+      - run:
           name: Configure backend server
           working_directory: ./.circleci/ansible
           command: |
