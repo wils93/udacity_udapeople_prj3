@@ -36,8 +36,38 @@ jobs:
       - install-dep:
           path: frontend
 
+  build-backend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: build backend
+          working_directory: ./backend
+          command: npm run build
+
+  build-frontend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: build frontend
+          working_directory: ./frontend
+          command: npm run build
+
 workflows:
   default:
     jobs:
       - install-backend-dep
       - install-frontend-dep
+
+      - build-backend:
+          requires:
+            - install-backend-dep
+
+      - build-frontend:
+          requires:
+            - install-frontend-dep            
