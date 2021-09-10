@@ -9,6 +9,10 @@ executors:
     docker:
       - image: amazon/aws-cli
 
+  python:
+    docker:
+      - image: python:3.9.0-alpine
+
 commands:
   install-dep:
     parameters:
@@ -140,12 +144,43 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID}
       - run:
-          name: Add backend IP to inventory file
+          name: Add backend IP to inventory file & memstash
           command: |
-            aws ec2 describe-instances \
+            backend-ip=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
-              --output text >> ./.circleci/ansible
+              --output text)
+            echo Backend IP: $backend-ip
+            echo $backend-ip >> ./.circleci/ansible/inventory.txt
+            curl -H "Content-Type: text/plain" -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request PUT --data "$backend-ip" https://api.memstash.io/values/backend-ip
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .circleci/ansible/inventory.txt
+
+  configure-infrastructure:
+    executor: python
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["0f:53:ba:92:71:d4:d8:cf:3e:b0:87:07:3b:d2:94:50"]
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install ansible
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure backend server
+          working_directory: ./.circleci/ansible
+          command: |
+            backend-ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request GET https://api.memstash.io/values/backend-ip)
+            cat inventory.txt
+            echo Backend IP: $backend-ip
+            ansible-playbook -i inventory.txt configure-server.yml --extra-vars "host=$backend-ip”
 
 workflows:
   default:
@@ -175,3 +210,7 @@ workflows:
             - build-frontend
 
       - deploy-infrastructure
+
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure

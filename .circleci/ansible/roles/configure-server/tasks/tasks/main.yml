@@ -1,0 +1,30 @@
+---
+- name: "Update apt packages"
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "Upgrade apt packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: "Auto remove unused packages"
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: "Install nodejs & npm"
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "Install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
