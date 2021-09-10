@@ -128,6 +128,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install tar
+          command: |
+            yum install -y tar gzip
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -152,6 +156,7 @@ jobs:
               --output text)
             echo Backend IP: $backend_ip
             echo $backend_ip >> ./.circleci/ansible/inventory.txt
+            cat ./.circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
               --request PUT --data "$backend_ip" https://api.memstash.io/values/backend_ip
       - persist_to_workspace:
