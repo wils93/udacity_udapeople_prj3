@@ -1,6 +1,5 @@
 version: 2.1
 
-
 executors:
   node:
     docker:
@@ -43,7 +42,7 @@ commands:
       - run:
           name: test << parameters.path >>
           working_directory: ./<< parameters.path >>
-          command: npm run test          
+          command: npm run test
 
 jobs:
   install-backend-dep:
@@ -86,7 +85,7 @@ jobs:
     steps:
       - checkout
       - test:
-          path: frontend          
+          path: frontend
 
 workflows:
   default:
@@ -108,4 +107,4 @@ workflows:
 
       - test-frontend:
           requires:
-            - build-frontend              
+            - build-frontend
