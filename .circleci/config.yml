@@ -54,7 +54,9 @@ commands:
       - run:
           name: scan << parameters.path >>
           working_directory: ./<< parameters.path >>
-          command: npm audit fix --audit-level=critical --force
+          command: |
+            npm i
+            npm audit fix --audit-level=critical --force
 
 jobs:
   install-backend-dep:
