@@ -12,28 +12,22 @@ commands:
       path:
         type: string
     steps:
-      - restore_cache:
-          keys:
-            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
       - run:
           name: npm install
           working_directory: ./<< parameters.path >>
           command: npm install
-      - save_cache:
-          key: npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
+      - persist_to_workspace:
+          root: .
           paths:
-            - ./<< parameters.path >>/nodes_modules
-
-
+            - << parameters.path >>/node_modules
 
   build:
     parameters:
       path:
         type: string
     steps:
-      - restore_cache:
-          keys:
-            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: build << parameters.path >>
           working_directory: ./<< parameters.path >>
@@ -44,9 +38,8 @@ commands:
       path:
         type: string
     steps:
-      - restore_cache:
-          keys:
-            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: test << parameters.path >>
           working_directory: ./<< parameters.path >>
@@ -115,4 +108,4 @@ workflows:
 
       - test-frontend:
           requires:
-            - build-frontend                      
+            - build-frontend              
