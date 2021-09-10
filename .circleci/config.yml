@@ -5,6 +5,10 @@ executors:
     docker:
       - image: circleci/node:13.8.0
 
+  aws:
+    docker:
+      - image: amazon/aws-cli
+
 commands:
   install-dep:
     parameters:
@@ -115,6 +119,27 @@ jobs:
       - scan:
           path: frontend
 
+  deploy-infrastructure:
+    executor: aws
+    steps:
+      - checkout
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file ./.circleci/files/backend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID}
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file ./.circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID}
+
 workflows:
   default:
     jobs:
@@ -137,7 +162,9 @@ workflows:
 
       - scan-backend:
           requires:
-            - build-backend      
+            - build-backend
       - scan-frontend:
           requires:
-            - build-frontend      
+            - build-frontend
+
+      - deploy-infrastructure
