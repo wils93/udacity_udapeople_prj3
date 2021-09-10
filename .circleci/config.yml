@@ -21,6 +21,18 @@ commands:
           paths:
             - << parameters.path >>/node_modules
 
+  build:
+    parameters:
+      path:
+        type: string
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: build << parameters.path >>
+          working_directory: ./<< parameters.path >>
+          command: npm run build
+
 jobs:
   install-backend-dep:
     executor: node
@@ -40,23 +52,15 @@ jobs:
     executor: node
     steps:
       - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: build backend
-          working_directory: ./backend
-          command: npm run build
+      - build:
+          path: backend
 
   build-frontend:
     executor: node
     steps:
       - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: build frontend
-          working_directory: ./frontend
-          command: npm run build
+      - build:
+          path: frontend
 
 workflows:
   default:
