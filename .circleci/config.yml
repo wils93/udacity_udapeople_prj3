@@ -44,6 +44,18 @@ commands:
           working_directory: ./<< parameters.path >>
           command: npm run test
 
+  scan:
+    parameters:
+      path:
+        type: string
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: scan << parameters.path >>
+          working_directory: ./<< parameters.path >>
+          command: npm audit --audit-level=critical
+
 jobs:
   install-backend-dep:
     executor: node
@@ -87,6 +99,20 @@ jobs:
       - test:
           path: frontend
 
+  scan-backend:
+    executor: node
+    steps:
+      - checkout
+      - scan:
+          path: backend
+
+  scan-frontend:
+    executor: node
+    steps:
+      - checkout
+      - scan:
+          path: frontend
+
 workflows:
   default:
     jobs:
@@ -108,3 +134,11 @@ workflows:
       - test-frontend:
           requires:
             - build-frontend
+
+      - scan-backend:
+          requires:
+            - test-backend
+
+      - scan-frontend:
+          requires:
+            - test-frontend            
