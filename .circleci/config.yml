@@ -14,9 +14,7 @@ commands:
       - run:
           name: npm install
           working_directory: ./<< parameters.path >>
-          command: |
-            npm install
-            npm audit fix --audit-level=critical --force
+          command: npm install
       - persist_to_workspace:
           root: .
           paths:
@@ -56,7 +54,7 @@ commands:
       - run:
           name: scan << parameters.path >>
           working_directory: ./<< parameters.path >>
-          command: npm audit --audit-level=critical
+          command: npm audit fix --audit-level=critical --force
 
 jobs:
   install-backend-dep:
@@ -124,7 +122,6 @@ workflows:
       - build-backend:
           requires:
             - install-backend-dep
-
       - build-frontend:
           requires:
             - install-frontend-dep
@@ -132,15 +129,13 @@ workflows:
       - test-backend:
           requires:
             - build-backend
-
       - test-frontend:
           requires:
             - build-frontend
 
       - scan-backend:
           requires:
-            - test-backend
-
+            - build-backend      
       - scan-frontend:
           requires:
-            - test-frontend            
+            - build-frontend      
