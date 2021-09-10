@@ -14,7 +14,9 @@ commands:
       - run:
           name: npm install
           working_directory: ./<< parameters.path >>
-          command: npm install
+          command: |
+            npm install
+            npm audit fix --audit-level=critical --force
       - persist_to_workspace:
           root: .
           paths:
