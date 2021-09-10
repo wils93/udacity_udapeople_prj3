@@ -22,7 +22,7 @@ commands:
       - save_cache:
           key: npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
           paths:
-            - nodes_modules
+            - ./<< parameters.path >>/nodes_modules
 
 
 
@@ -33,11 +33,24 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - npm-modules-cache-{{ checksum 'package-lock.json' }}
+            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
       - run:
           name: build << parameters.path >>
           working_directory: ./<< parameters.path >>
           command: npm run build
+
+  test:
+    parameters:
+      path:
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
+      - run:
+          name: test << parameters.path >>
+          working_directory: ./<< parameters.path >>
+          command: npm run test          
 
 jobs:
   install-backend-dep:
@@ -68,6 +81,20 @@ jobs:
       - build:
           path: frontend
 
+  test-backend:
+    executor: node
+    steps:
+      - checkout
+      - test:
+          path: backend
+
+  test-frontend:
+    executor: node
+    steps:
+      - checkout
+      - test:
+          path: frontend          
+
 workflows:
   default:
     jobs:
@@ -80,4 +107,12 @@ workflows:
 
       - build-frontend:
           requires:
-            - install-frontend-dep            
+            - install-frontend-dep
+
+      - test-backend:
+          requires:
+            - build-backend
+
+      - test-frontend:
+          requires:
+            - build-frontend                      
