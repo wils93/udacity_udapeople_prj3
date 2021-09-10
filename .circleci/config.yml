@@ -146,14 +146,14 @@ jobs:
       - run:
           name: Add backend IP to inventory file & memstash
           command: |
-            backend-ip=$(aws ec2 describe-instances \
+            backend_ip=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
               --output text)
-            echo Backend IP: $backend-ip
-            echo $backend-ip >> ./.circleci/ansible/inventory.txt
+            echo Backend IP: $backend_ip
+            echo $backend_ip >> ./.circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
-              --request PUT --data "$backend-ip" https://api.memstash.io/values/backend-ip
+              --request PUT --data "$backend_ip" https://api.memstash.io/values/backend_ip
       - persist_to_workspace:
           root: .
           paths:
@@ -176,11 +176,11 @@ jobs:
           name: Configure backend server
           working_directory: ./.circleci/ansible
           command: |
-            backend-ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
-              --request GET https://api.memstash.io/values/backend-ip)
+            backend_ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request GET https://api.memstash.io/values/backend_ip)
             cat inventory.txt
-            echo Backend IP: $backend-ip
-            ansible-playbook -i inventory.txt configure-server.yml --extra-vars "host=$backend-ip”
+            echo Backend IP: $backend_ip
+            ansible-playbook -i inventory.txt configure-server.yml --extra-vars "host=$backend_ip”
 
 workflows:
   default:
