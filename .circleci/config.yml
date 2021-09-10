@@ -12,22 +12,28 @@ commands:
       path:
         type: string
     steps:
+      - restore_cache:
+          keys:
+            - npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
       - run:
           name: npm install
           working_directory: ./<< parameters.path >>
           command: npm install
-      - persist_to_workspace:
-          root: .
+      - save_cache:
+          key: npm-modules-cache-{{ checksum "./<< parameters.path >>/package-lock.json" }}
           paths:
-            - << parameters.path >>/node_modules
+            - nodes_modules
+
+
 
   build:
     parameters:
       path:
         type: string
     steps:
-      - attach_workspace:
-          at: .
+      - restore_cache:
+          keys:
+            - npm-modules-cache-{{ checksum 'package-lock.json' }}
       - run:
           name: build << parameters.path >>
           working_directory: ./<< parameters.path >>
