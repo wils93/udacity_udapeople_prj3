@@ -307,7 +307,7 @@ jobs:
       - run:
           name: Test frontend
           command: |
-            url="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"
+            url="https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com"
             if curl -s ${url} | grep "Welcome"
             then
               return 1
