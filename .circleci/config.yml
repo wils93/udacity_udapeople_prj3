@@ -398,7 +398,7 @@ jobs:
           working_directory: ./.circleci/files
           command: |
             old_workflow_id=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
-              --request GET https://api.memstash.io/values/migration_${workflow_id})
+              --request GET https://api.memstash.io/values/workflow_id)
             if [[ "${CIRCLE_WORKFLOW_ID}" != "$old_workflow_id" ]]
             then
               echo "$old_workflow_id!=$CIRCLE_WORKFLOW_ID => Will delete old version!"
