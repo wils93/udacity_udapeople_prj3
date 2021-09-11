@@ -265,9 +265,9 @@ jobs:
           command: |
             apk add --update curl
       - run:
-          name: Install nodejs, npm
+          name: Install nodejs, npm, rsync
           command: |
-            apk add --update nodejs npm
+            apk add --update nodejs npm rsync
       - run:
           name: Build backend
           working_directory: ./backend
