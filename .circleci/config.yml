@@ -78,7 +78,7 @@ commands:
           command: |
             aws s3 rm s3://udapeople-<< parameters.id >> --recursive
             aws cloudformation delete-stack --stack-name backendstack-<< parameters.id >>
-            aws cloudformation delete-stack --stack-name frontendstack-<< parameters.id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontned-<< parameters.id >>
           when: on_fail
 
   revert-migrations:
