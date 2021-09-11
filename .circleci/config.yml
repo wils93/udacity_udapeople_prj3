@@ -66,6 +66,29 @@ commands:
             npm i
             npm audit fix --audit-level=critical --force
 
+  destroy-environment:
+    parameters:
+      when:
+        type: string
+      id:
+        type: string
+    steps:
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: /tmp
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Destroy stacks
+          command: |
+            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+            aws cloudformation delete-stack --stack-name backendstack-<< parameters.id >>
+            aws cloudformation delete-stack --stack-name frontendstack-<< parameters.id >>
+          when: on_fail
+
 jobs:
   install-backend-dep:
     executor: node
@@ -167,7 +190,7 @@ jobs:
   configure-infrastructure:
     executor: python
     environment:
-      ENVIRONMENT: "production" 
+      ENVIRONMENT: "production"
       TYPEORM_CONNECTION: $TYPEORM_CONNECTION
       TYPEORM_HOST: $TYPEORM_HOST
       TYPEORM_USERNAME: $TYPEORM_USERNAME
@@ -260,14 +283,14 @@ jobs:
   deploy-backend:
     executor: python
     environment:
-      ENVIRONMENT: "production" 
+      ENVIRONMENT: "production"
       TYPEORM_CONNECTION: $TYPEORM_CONNECTION
       TYPEORM_HOST: $TYPEORM_HOST
       TYPEORM_USERNAME: $TYPEORM_USERNAME
       TYPEORM_PASSWORD: $TYPEORM_PASSWORD
       TYPEORM_DATABASE: $TYPEORM_DATABASE
       TYPEORM_PORT: $TYPEORM_PORT
-      TYPEORM_ENTITIES: $TYPEORM_ENTITIES    
+      TYPEORM_ENTITIES: $TYPEORM_ENTITIES
     steps:
       - checkout
       - add_ssh_keys:
@@ -323,7 +346,9 @@ jobs:
             else
               return 0
             fi
-
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID}
+          when: on_fail
 
 workflows:
   default:
