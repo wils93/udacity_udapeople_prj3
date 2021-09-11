@@ -99,7 +99,7 @@ commands:
           working_directory: ./backend
           command: |
             status=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
-              --request GET https://api.memstash.io/values/migration_status)
+              --request GET https://api.memstash.io/values/migration_status_${CIRCLE_WORKFLOW_ID})
             echo $status
             if [[ "$status" == "success" ]]
             then
