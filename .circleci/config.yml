@@ -90,6 +90,26 @@ commands:
             aws cloudformation delete-stack --stack-name frontendstack-<< parameters.id >>
           when: on_fail
 
+  revert-migrations:
+    parameters:
+      when:
+        type: string
+    steps:
+      - run:
+          name: Revert migrations
+          working_directory: ./backend
+          command: |
+            status=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request GET https://api.memstash.io/values/migration_status)
+            echo $status
+            if [[ "$status" == "success" ]]
+            then
+              pwd
+              ls -la
+              npm run migrations:revert
+            fi
+          when: on_fail
+
 jobs:
   install-backend-dep:
     executor: node
@@ -348,11 +368,13 @@ jobs:
             then
               return 1
             else
-              return 0
+              return 1
             fi
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID}
           when: on_fail
+      - revert-migrations:
+          when: on_fail          
 
 workflows:
   default:
