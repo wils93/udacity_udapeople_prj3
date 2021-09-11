@@ -215,6 +215,33 @@ jobs:
               --request PUT --data "failure" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             fi
 
+  deploy-frontend:
+    executor: aws
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+            yum -y install nodejs
+      - run:
+          name: Get backend URL
+          working_directory: ./frontend
+          command: |
+            backend_ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request GET https://api.memstash.io/values/backend_ip)
+            export API_URL="http://${backend_ip}:3030"
+            echo $API_URL
+            npm run build
+      - run:
+          name: Deploy frontend object to S3
+          working_directory: ./frontend
+          command: |
+            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
+
+
+
+
 
 
 workflows:
@@ -250,10 +277,14 @@ workflows:
           requires:
             - deploy-infrastructure
 
-      - run-migration:
+      - run-migrations:
           requires:
             - test-backend
             - test-frontend
             - scan-backend
             - scan-frontend
             - configure-infrastrucutre
+
+      - deploy-frontend:
+          requires:
+            - run-migrations
