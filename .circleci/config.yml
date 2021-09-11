@@ -313,7 +313,7 @@ workflows:
             - test-frontend
             - scan-backend
             - scan-frontend
-            - configure-infrastrucutre
+            - configure-infrastructure
 
       - deploy-frontend:
           requires:
