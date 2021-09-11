@@ -320,7 +320,7 @@ jobs:
       - run:
           name: Dump variables to file
           working_directory: ./backend
-          command: | 
+          command: |
             echo ENVIROMENT=production >> ".env"
             echo TYPEORM_CONNECTION=postgres >> ".env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> ".env"
@@ -368,7 +368,31 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID}
           when: on_fail
       - revert-migrations:
-          when: on_fail          
+          when: on_fail
+
+  cloudfront-update:
+    executor: aws
+    steps:
+      - checkout
+      - run:
+          name: Store old workflow ID
+          command: |
+            workflow_id=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            curl -H "Content-Type: text/plain" -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+              --request PUT --data "${workflow_id}" https://api.memstash.io/values/workflow_id
+      - run:
+          name: Update cloudfront distribution
+          working_directory: ./.circleci/files
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudfront.yaml \
+              --stack-name udapeople-cloudfront \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}" \
+              --tags project=udapeople
+      - revert-migrations:
+          when: on_fail
 
 workflows:
   default:
@@ -423,3 +447,8 @@ workflows:
           requires:
             - deploy-frontend
             - deploy-backend
+
+      - cloudfront-update:
+          requires:
+            - smoke-test
+
