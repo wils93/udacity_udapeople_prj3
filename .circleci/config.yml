@@ -352,8 +352,8 @@ jobs:
           command: |
             backend_ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
                 --request GET https://api.memstash.io/values/backend_ip)
-            url=https://$backend_ip:3030/api/status
-            curl -f ${url} && echo "Success" || echo "Failure!"
+            url=http://$backend_ip:3030/api/status
+            curl ${url}
       - run:
           name: Test frontend
           command: |
