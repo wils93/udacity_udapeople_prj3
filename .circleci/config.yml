@@ -195,6 +195,8 @@ jobs:
     executor: node
     steps:
       - checkout
+      - install-dep:
+          path: backend
       - run:
           name: Run migrations
           working_directory: ./backend
