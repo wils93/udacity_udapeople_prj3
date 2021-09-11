@@ -77,10 +77,11 @@ commands:
           name: Install AWS CLI dependencies
           working_directory: /tmp
           command: |
-            sudo apt-get update && sudo apt-get install -yy less
+            apt-get update && apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            sudo ./aws/install
+            ./aws/install
+          when: on_fail
       - run:
           name: Destroy stacks
           command: |
@@ -186,6 +187,9 @@ jobs:
           root: .
           paths:
             - .circleci/ansible/inventory.txt
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID}
+          when: on_fail
 
   configure-infrastructure:
     executor: python
