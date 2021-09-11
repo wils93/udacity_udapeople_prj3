@@ -439,7 +439,11 @@ workflows:
           requires:
             - build-frontend
 
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only:
+                - master
 
       - configure-infrastructure:
           requires:
@@ -452,6 +456,10 @@ workflows:
             - scan-backend
             - scan-frontend
             - configure-infrastructure
+          filters:
+            branches:
+              only:
+                - master
 
       - deploy-frontend:
           requires:
