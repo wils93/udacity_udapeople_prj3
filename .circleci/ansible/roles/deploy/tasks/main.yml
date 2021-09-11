@@ -5,14 +5,18 @@
     state: directory
 
 - name: Copy backend files
-  copy:
+  become: yes
+  synchronize:
     src: ../../backend/dist
     dest: /home/ubuntu/backend
+    recursive: true
 
 - name: Copy backend modules
-  copy:
+  become: yes
+  synchronize:
     src: ../../backend/node_modules
     dest: /home/ubuntu/backend
+    recursive: true
 
 - name: Start server
   become: true
