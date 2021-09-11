@@ -7,16 +7,23 @@
 - name: Copy backend files
   become: yes
   synchronize:
-    src: ../../backend/dist
+    src: ../../backend
     dest: /home/ubuntu/backend
     recursive: true
 
-- name: Copy backend modules
-  become: yes
-  synchronize:
-    src: ../../backend/node_modules
-    dest: /home/ubuntu/backend
-    recursive: true
+# - name: Copy backend files
+#   become: yes
+#   synchronize:
+#     src: ../../backend/dist
+#     dest: /home/ubuntu/backend
+#     recursive: true
+
+# - name: Copy backend modules
+#   become: yes
+#   synchronize:
+#     src: ../../backend/node_modules
+#     dest: /home/ubuntu/backend
+#     recursive: true
 
 - name: Start server
   become: true
