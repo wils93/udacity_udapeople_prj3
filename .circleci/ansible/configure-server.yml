@@ -15,10 +15,6 @@
         port: 22
         delay: 10
 
-  roles:
-    - configure-prometheus-node-exporter
-    - configure-server
-
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: postgres
@@ -28,3 +24,7 @@
     TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+
+  roles:
+    - configure-prometheus-node-exporter
+    - configure-server

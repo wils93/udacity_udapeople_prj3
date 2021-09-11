@@ -8,7 +8,7 @@
   become: yes
   synchronize:
     src: ../../backend
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu
     recursive: true
 
 # - name: Copy backend files
