@@ -280,7 +280,31 @@ jobs:
           command: |
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-          no_output_timeout: 30m
+
+  smoke-test:
+    executor: python
+    steps:
+      - run:
+          name: Install curl
+          command: apk add --update curl
+      - run:
+          name: Test backend
+          command: |
+            backend_ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
+                --request GET https://api.memstash.io/values/backend_ip)
+            url=https://$backend_ip:3030/api/status
+            curl -f ${url} && echo "Success" || echo "Failure!"
+      - run:
+          name: Test frontend
+          command: |
+            url="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-east-1.amazonaws.com"
+            if curl -s ${url} | grep "Welcome"
+            then
+              return 1
+            else
+              return 0
+            fi
+
 
 workflows:
   default:
@@ -330,3 +354,8 @@ workflows:
       - deploy-backend:
           requires:
             - run-migrations
+
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend
