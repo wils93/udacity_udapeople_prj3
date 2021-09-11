@@ -408,7 +408,7 @@ jobs:
             then
               echo "$old_workflow_id!=$CIRCLE_WORKFLOW_ID => Will delete old version!"
               aws s3 rm "s3://udapeople-${old_workflow_id}" --recursive
-              aws cloudformation delete-stack --stack-name "upapeople-frontend-${old_workflow_id}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${old_workflow_id}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${old_workflow_id}"
             fi
 
