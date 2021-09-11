@@ -272,6 +272,7 @@ jobs:
           name: Build backend
           working_directory: ./backend
           command: |
+            npm install
             npm run build
       - run:
           name: Deploy backend

@@ -9,6 +9,11 @@
     src: ../../backend/dist
     dest: /home/ubuntu/backend
 
+- name: Copy backend modules
+  copy:
+    src: ../../backend/node_modules
+    dest: /home/ubuntu/backend
+
 - name: Start server
   become: true
   command: pm2 start -f ./main.js
