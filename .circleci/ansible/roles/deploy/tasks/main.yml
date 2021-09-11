@@ -4,29 +4,40 @@
     path: /home/ubuntu/backend/
     state: directory
 
-- name: Copy backend files
-  become: yes
-  synchronize:
-    src: ../../backend
-    dest: /home/ubuntu
-    recursive: true
-
 # - name: Copy backend files
 #   become: yes
 #   synchronize:
-#     src: ../../backend/dist
-#     dest: /home/ubuntu/backend
+#     src: ../../backend
+#     dest: /home/ubuntu
 #     recursive: true
 
-# - name: Copy backend modules
-#   become: yes
-#   synchronize:
-#     src: ../../backend/node_modules
-#     dest: /home/ubuntu/backend
-#     recursive: true
+- name: Copy backend files
+  become: yes
+  synchronize:
+    src: ../../backend/dist
+    dest: /home/ubuntu/backend
+    recursive: true
+
+- name: Copy backend modules
+  become: yes
+  synchronize:
+    src: ../../backend/node_modules
+    dest: /home/ubuntu/backend
+    recursive: true
 
 - name: Start server
   become: true
   command: pm2 start -f ./main.js
   args:
     chdir: /home/ubuntu/backend/dist
+  environment:
+    ENVIRONMENT: production
+    TYPEORM_CONNECTION: postgres
+    TYPEORM_MIGRATIONS_DIR: "./migrations"
+    TYPEORM_MIGRATIONS: "./migrations/*.js"
+    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
+    TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+    TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+    TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
