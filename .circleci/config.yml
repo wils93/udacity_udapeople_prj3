@@ -240,6 +240,7 @@ jobs:
               --request GET https://api.memstash.io/values/backend_ip)
             export API_URL="https://${backend_ip}:3030"
             echo $API_URL
+            npm install
             npm run build
       - run:
           name: Deploy frontend object to S3
