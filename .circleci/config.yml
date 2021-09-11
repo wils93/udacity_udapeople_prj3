@@ -75,7 +75,6 @@ commands:
     steps:
       - run:
           name: Install AWS CLI dependencies
-          working_directory: /tmp
           command: |
             apt-get update && apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -85,9 +84,9 @@ commands:
       - run:
           name: Destroy stacks
           command: |
-            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
-            aws cloudformation delete-stack --stack-name backendstack-<< parameters.id >>
-            aws cloudformation delete-stack --stack-name frontendstack-<< parameters.id >>
+            /usr/local/bin/aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+            /usr/local/bin/aws cloudformation delete-stack --stack-name backendstack-<< parameters.id >>
+            /usr/local/bin/aws cloudformation delete-stack --stack-name frontendstack-<< parameters.id >>
           when: on_fail
 
   revert-migrations:
