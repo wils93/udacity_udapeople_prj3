@@ -27,6 +27,6 @@
 
 - name: Start server
   become: true
-  command: npm run start
+  command: npm run start &
   args:
-    chdir: /home/ubuntu/backend/dist
+    chdir: /home/ubuntu/backend
