@@ -358,12 +358,7 @@ jobs:
           name: Test frontend
           command: |
             url="https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com"
-            if curl -s ${url} | grep "Welcome"
-            then
-              return 0
-            else
-              return 1
-            fi
+            curl -s ${url} | grep -q "Welcome"
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID}
           when: on_fail
