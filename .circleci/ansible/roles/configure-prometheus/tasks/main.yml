@@ -1,0 +1,116 @@
+---
+- name: "Make dir for prometheus"
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/prometheus
+    - /var/lib/prometheus
+
+- name: "Make dir for alertmanager"
+  become: true
+  file:
+    path: "/var/lib/alertmanager"
+    state: directory
+
+- name: "Download prometheus"
+  unarchive:
+    src: https://github.com/prometheus/prometheus/releases/download/v2.19.0/prometheus-2.19.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "Download alertmanager"
+  unarchive:
+    src: https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "Create prometheus user"
+  become: true
+  user:
+    name: prometheus
+    create_home: no
+
+- name: "Move prometheus binaries"
+  become: true
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: true
+  with_items:
+    - {
+        src: "/tmp/prometheus-2.19.0.linux-amd64/prometheus",
+        dest: "/usr/local/bin",
+      }
+    - {
+        src: "/tmp/prometheus-2.19.0.linux-amd64/promtool",
+        dest: "/usr/local/bin",
+      }
+    - { src: "/tmp/prometheus-2.19.0.linux-amd64/consoles", dest: "/etc/prometheus" }
+    - {
+        src: "/tmp/prometheus-2.19.0.linux-amd64/console_libraries",
+        dest: "/etc/prometheus",
+      }
+
+- name: "Move alertmanager binaries"
+  become: true
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: true
+  with_items:
+    - {
+        src: "/tmp/alertmanager-0.21.0.linux-amd64/alertmanager",
+        dest: "/usr/local/bin",
+      }
+    - {
+        src: "/tmp/alertmanager-0.21.0.linux-amd64/amtool",
+        dest: "/usr/local/bin",
+      }
+
+- name: "Add prometheus configuration files"
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: /etc/prometheus
+  loop:
+    - alertmanager.yml
+    - prometheus.yml
+    - rules.yml
+
+- name: "Add service files"
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system
+  loop:
+    - alertmanager.service
+    - prometheus.service
+
+- name: "Change permissions"
+  become: true
+  file:
+    path: "{{ item }}"
+    owner: prometheus
+    group: prometheus
+    mode: +x
+  loop:
+    - /etc/prometheus
+    - /usr/local/bin/prometheus
+    - /usr/local/bin/promtool
+    - /etc/prometheus/consoles
+    - /etc/prometheus/console_libraries
+    - /var/lib/prometheus
+    - /usr/local/bin/alertmanager
+
+- name: "Enable & start services"
+  become: true
+  service:
+    enabled: yes
+    daemon_reload: yes
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - prometheus
+    - alertmanager

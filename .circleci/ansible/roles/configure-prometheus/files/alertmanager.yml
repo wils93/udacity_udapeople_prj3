@@ -1,0 +1,13 @@
+route:
+  group_by: [Alertname]
+  receiver: myself
+
+receivers:
+- name: myself
+  email_configs:
+  - to: andero.wil@gmail.com
+    from: andero.wil@gmail.com
+    smarthost: smtp.gmail.com:587
+    auth_username: andero.wil@gmail.com
+    auth_identity: andero.wil@gmail.com
+    auth_password: hcxfgwddrsghistx
