@@ -64,7 +64,7 @@ commands:
           working_directory: ./<< parameters.path >>
           command: |
             npm i
-            npm audit fix --audit-level=critical
+            npm audit fix --audit-level=critical --force
 
   destroy-environment:
     parameters:
