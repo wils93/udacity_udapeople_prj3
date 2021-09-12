@@ -27,7 +27,7 @@ For your submission, please submit the following:
   1. Public URL for your CloudFront distribution (aka, your blue production front-end) [URL03]
   1. Public URLs to deployed application back-end in EC2 [URL04]
   1. Public URL to your Prometheus Server [URL05]
-- Your [screenshots](.) in JPG or PNG format, named using the screenshot number listed in the instructions. These screenshots should be included in your code repository in the root folder.
+- Your [screenshots](./screenshots/screenshots.md) in JPG or PNG format, named using the screenshot number listed in the instructions. These screenshots should be included in your code repository in the root folder.
   1. Job failed because of compile errors. [SCREENSHOT01]
   1. Job failed because of unit tests. [SCREENSHOT02]
   1. Job that failed because of vulnerable packages. [SCREENSHOT03]
@@ -41,7 +41,7 @@ For your submission, please submit the following:
   1. Provide a screenshot of a graph of your EC2 instance including available memory, available disk space, and CPU usage. [SCREENSHOT11]
   1. Provide a screenshot of an alert that was sent by Prometheus. [SCREENSHOT12]
 
-- Your presentation should be in PDF format named "presentation.pdf" and should be included in your code repository root folder. 
+- Your presentation should be in PDF format named ["presentation.pdf"](https://docs.google.com/presentation/d/1nQWfvGLeaFls7q4DLsRcdMT8LD5KoVbc7YYO3sr18MA/edit?usp=sharing) and should be included in your code repository root folder. 
 
 Before you submit your project, please check your work against the project rubric. If you haven’t satisfied each criterion in the rubric, then revise your work so that you have met all the requirements. 
 
