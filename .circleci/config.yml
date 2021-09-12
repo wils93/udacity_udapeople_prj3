@@ -64,7 +64,7 @@ commands:
           working_directory: ./<< parameters.path >>
           command: |
             npm i
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical
 
   destroy-environment:
     parameters:
@@ -287,7 +287,9 @@ jobs:
             backend_ip=$(curl -H "token: dd8404ce-b1ff-4441-8c72-1765aeb9f088" \
               --request GET https://api.memstash.io/values/backend_ip)
             export API_URL="http://${backend_ip}:3030"
-            echo $API_URL
+            echo "NODE_ENV=production" >> frontend/.env
+            echo "API_URL=${API_URL}" >> frontend/.env
+            cat frontend/.env
             npm install
             npm run build
       - run:
