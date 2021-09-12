@@ -287,7 +287,7 @@ jobs:
             export API_URL="http://${backend_ip}:3030"
             echo ENVIRONMENT=production > ".env"
             echo NODE_ENV=production >> ".env"
-            echo API_URIL=$API_URL >> ".env"
+            echo API_URL=$API_URL >> ".env"
             cat .env
             npm install
             npm run build
