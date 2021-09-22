@@ -1,3 +1,9 @@
+<div align="right">
+<a href=https://circleci.com/gh/wils93/udacity_udapeople_prj3/tree/master>
+<img src=https://circleci.com/gh/wils93/udacity_udapeople_prj3/tree/master.svg?style=svg alt="circleci">
+</a>
+</div>
+
 ## Give your Application Auto-Deploy Superpowers
 
 In this project, you will prove your mastery of the following learning objectives:
